@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'app.slicequeue'
+version = '0.0.3'
+
+repositories {
+    mavenCentral()
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group.toString()
+            artifactId = 'sq-common-event-model'
+            version = project.version.toString()
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'artifactory'
+            url = uri("https://af.slicequeue.app/artifactory/gradle-dev")
+
+            credentials {
+                username = findProperty("ARTIFACTORY_USER") as String
+                password = findProperty("ARTIFACTORY_PASSWORD") as String
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    /* --- Lombok --- */
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    /* --- Libs --- */
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+}
+
+test {
+    useJUnitPlatform()
+}
